@@ -18,17 +18,22 @@ class MainViewModel(
 ) : ViewModel() {
 
     val playedVideo = MutableLiveData<VideoItem>()
+    val isFullScreenLiveData = MutableLiveData<Boolean>()
 
     fun getVideos() = dataSource.getVideos()
 
     fun bindPlayer(lifecycle: Lifecycle) {
         lifecycle.addObserver(playerManager)
     }
+
     fun releasePlayer(lifecycle: Lifecycle) {
         lifecycle.removeObserver(playerManager)
     }
+
     fun setPlayedVideo(playerView: PlayerView, videoItem: VideoItem) {
         playedVideo.postValue(videoItem)
-        playerManager.play(playerView, videoItem)
+        playerManager.play(videoItem, playerView) { isFullScreen ->
+            isFullScreenLiveData.postValue(isFullScreen)
+        }
     }
 }

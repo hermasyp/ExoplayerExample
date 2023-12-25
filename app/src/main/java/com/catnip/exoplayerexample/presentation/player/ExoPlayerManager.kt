@@ -20,7 +20,7 @@ class ExoPlayerManager : DefaultLifecycleObserver {
     private var player: ExoPlayer? = null
     private var msf: MediaSource.Factory? = null
 
-    private fun initPlayer(playerView: PlayerView) {
+    private fun initPlayer(playerView: PlayerView, fullScreenListener: (Boolean) -> Unit) {
         player = get(ExoPlayer::class.java)
         msf = get(MediaSource.Factory::class.java)
         playerView.apply {
@@ -30,13 +30,16 @@ class ExoPlayerManager : DefaultLifecycleObserver {
         player?.apply {
             playWhenReady = true
         }
+        playerView.setFullscreenButtonClickListener { isFullScreen ->
+            fullScreenListener(isFullScreen)
+        }
     }
 
-    fun play(playerView: PlayerView, videoItem: VideoItem) {
+    fun play(videoItem: VideoItem, playerView: PlayerView, onFullScreenListener: (Boolean) -> Unit) {
         if (player != null && msf != null) {
             releasePlayer()
         }
-        initPlayer(playerView)
+        initPlayer(playerView, onFullScreenListener)
         setMediaItemPlayer(videoItem)
     }
 
