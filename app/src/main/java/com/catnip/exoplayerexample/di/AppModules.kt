@@ -59,7 +59,7 @@ object AppModules {
             DefaultMediaSourceFactory(androidContext()).setDataSourceFactory(get())
         }
         factory { ExoPlayer.Builder(androidContext()).build() }
-        factory { ExoPlayerManager(get(),get()) }
+        factory { ExoPlayerManager() }
 
     }
 

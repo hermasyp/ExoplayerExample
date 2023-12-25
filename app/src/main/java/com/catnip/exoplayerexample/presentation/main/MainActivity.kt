@@ -2,7 +2,6 @@ package com.catnip.exoplayerexample.presentation.main
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Toast
 import com.catnip.exoplayerexample.data.model.VideoItem
 import com.catnip.exoplayerexample.databinding.ActivityMainBinding
 import com.catnip.exoplayerexample.presentation.main.adapter.VideoListAdapter
@@ -23,7 +22,7 @@ class MainActivity : AppCompatActivity() {
     private val viewModel: MainViewModel by viewModel()
 
     private fun playVideo(videoItem: VideoItem) {
-        viewModel.setPlayedVideo(videoItem)
+        viewModel.setPlayedVideo(binding.playerView, videoItem)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,10 +30,11 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setupVideoList()
         observePlayedVideo()
+        viewModel.bindPlayer(lifecycle)
     }
 
     private fun observePlayedVideo() {
-        viewModel.playedVideo.observe(this){
+        viewModel.playedVideo.observe(this) {
             binding.tvVideoTitle.text = it.title
             binding.tvVideoAuthor.text = it.author
         }
@@ -45,6 +45,11 @@ class MainActivity : AppCompatActivity() {
         viewModel.getVideos().let {
             adapter.submitData(it)
         }
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        viewModel.releasePlayer(lifecycle)
     }
 
 

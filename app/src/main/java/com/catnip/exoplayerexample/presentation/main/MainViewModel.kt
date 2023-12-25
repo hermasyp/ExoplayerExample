@@ -1,8 +1,9 @@
 package com.catnip.exoplayerexample.presentation.main
 
-import androidx.lifecycle.LiveData
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.media3.ui.PlayerView
 import com.catnip.exoplayerexample.data.datasource.VideosDataSource
 import com.catnip.exoplayerexample.data.model.VideoItem
 import com.catnip.exoplayerexample.presentation.player.ExoPlayerManager
@@ -20,7 +21,14 @@ class MainViewModel(
 
     fun getVideos() = dataSource.getVideos()
 
-    fun setPlayedVideo(videoItem: VideoItem){
+    fun bindPlayer(lifecycle: Lifecycle) {
+        lifecycle.addObserver(playerManager)
+    }
+    fun releasePlayer(lifecycle: Lifecycle) {
+        lifecycle.removeObserver(playerManager)
+    }
+    fun setPlayedVideo(playerView: PlayerView, videoItem: VideoItem) {
         playedVideo.postValue(videoItem)
+        playerManager.play(playerView, videoItem)
     }
 }
